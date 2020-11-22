@@ -1,13 +1,14 @@
 
 import {v4 as uuidV4} from 'uuid'
+import axios from 'axios'
 
-function createGame(playerName) {
-    // TODO call backend
+async function createGame(playerName) {
 
-    return {
-        gameId: uuidV4(),
-        playerId: uuidV4()
-    }
+    let response = await axios.post("/games/", {
+        playerName: playerName
+    })
+
+    return response.data
 }
 
 export default createGame
