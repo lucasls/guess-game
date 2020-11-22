@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require("express");
 const path = require('path');
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
@@ -10,9 +12,13 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../build')));
 
-app.post('/games/',  (req, res) => {
+if (process.env.USE_CORS) {
+    app.use(cors())
+}
+
+app.post('/games/', (req, res) => {
     console.log(`O jogadador ${req.body.playerName} iniciou o jogo`)
-    
+
     res.json({
         gameId: uuidv4(),
         playerId: uuidv4()
