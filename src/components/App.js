@@ -16,53 +16,59 @@ import GameState from '../domain/GameState'
 function App() {
 
     function Current() {
-        const [gameState, setGameState] = useState(GameState.LOADING_GAME)
-        const history = useHistory()
+        const [game, setGame] = useState(null)
 
+        const history = useHistory()
         let { gameId } = useParams();
         const playerId = Cookie.get("playerId")
 
         async function loadGame() {
             const game = await findGame(gameId)
 
-            const hasPlayer = () => game.players
-                .map(it => it.id)
-                .includes(playerId)
-
             if (!game) {
                 history.push("/")
-            } else if (hasPlayer()) {
-                setGameState(game.currentState)
             } else {
-                setGameState(GameState.WELCOME)            
+                setGame(game)
             }
         }
 
-        if (gameState === GameState.LOADING_GAME) {
-            if (!gameId || !playerId) {
-                setGameState(GameState.WELCOME)
-            } else {
-                loadGame()
-            }
+        const hasPlayer = () => game.players
+            .map(it => it.id)
+            .includes(playerId)
+
+        let gameState
+
+        if (!gameId || !playerId) {
+            gameState = GameState.WELCOME
+        } else if (!game) {
+            gameState = GameState.LOADING_GAME
+            loadGame()
+        } else if (!hasPlayer()) {
+            gameState = GameState.WELCOME
+        } else {
+            gameState = game.currentState
         }
 
-        function handleStartGame(newGameData) {
-
+        async function handleStartGame(newGameData) {
             Cookie.set('playerId', newGameData.playerId)
+            
+            const game = await findGame(newGameData.gameId)
+            setGame(game)
+        }
 
-            setGameState(GameState.JOIN_GAME)
+        function handleTeamComplete(game) {
+            setGame(game)
         }
 
         const gameData = {
-            gameId: gameId,
-            playerId: Cookie.get("playerId"),
-            playerName: Cookie.get("playerName")
+            playerId: playerId,
+            game: game
         }
 
         switch (gameState) {
             case GameState.LOADING_GAME: return (<div>Loading...</div>)
             case GameState.WELCOME: return (<Welcome onStartGame={handleStartGame} />)
-            case GameState.JOIN_GAME: return (<Teams gameData={gameData} />)
+            case GameState.JOIN_GAME: return (<Teams gameData={gameData} onTeamComplete={handleTeamComplete} />)
             case GameState.ADD_WORDS: return (<div>Add your words</div>)
         }
     }
