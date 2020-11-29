@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const createGame = require('./useCases/createGame')
 const joinGame = require('./useCases/joinGame')
+const findGame = require('./useCases/findGame')
 
 const app = express();
 
@@ -17,13 +18,30 @@ if (process.env.USE_CORS) {
     app.use(cors())
 }
 
-app.post('/games/', async (req, res) => {
-    res.json(await createGame(req.body.playerName))
-});
+function handle(block) {
+    return async (req, res, next) => {
+        try {
+            res.json(await block(req))
+        } catch (e) {
+            next(e)
+        }
+    }
+}
 
-app.post('/games/:gameId/players/', async (req, res) => {
-    res.json(await joinGame(req.params.gameId, req.body.playerName))
-});
+app.post(
+    '/games/',
+    handle(async req => await createGame(req.body.playerName))
+)
+
+app.post(
+    '/games/:gameId/players/', 
+    handle(async req => await joinGame(req.params.gameId, req.body.playerName))
+)
+
+app.get(
+    '/games/:gameId',
+    handle(async req => await findGame(req.params.gameId))
+)
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../build/index.html'));
