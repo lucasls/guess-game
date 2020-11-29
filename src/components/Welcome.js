@@ -21,7 +21,7 @@ function Welcome(props) {
 
         setPlayerName(trimmedName)
 
-        if (trimmedName == "") {
+        if (trimmedName === "") {
             alert("Please write your name")
             return
         }

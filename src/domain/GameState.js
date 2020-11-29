@@ -7,4 +7,4 @@ const GameState = {
     GAME_RESULTS: "GAME_RESULTS"
 }
 
-module.exports = GameState
+export default GameState

@@ -6,6 +6,7 @@ const cors = require('cors')
 const createGame = require('./useCases/createGame')
 const joinGame = require('./useCases/joinGame')
 const findGame = require('./useCases/findGame')
+const setPlayerTeam = require('./useCases/setPlayerTeam')
 
 const app = express();
 
@@ -41,6 +42,11 @@ app.post(
 app.get(
     '/games/:gameId',
     handle(async req => await findGame(req.params.gameId))
+)
+
+app.post(
+    '/games/:gameId/players/:playerId/set-team',
+    handle(async req => await setPlayerTeam(req.params.gameId, req.params.playerId, req.body.team))
 )
 
 app.get('/*', (req, res) => {
