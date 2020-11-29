@@ -72,3 +72,39 @@ exports.createGame = async function (game) {
 exports.joinGame = async function (gameId, player) {
     await createPlayer(gameId, player)
 }
+
+exports.findGame = async function (gameId) {
+    let res
+    
+    try {
+    res = await pool.query(`
+        select * from game g
+        join player p on p.game_id = g.game_id
+        where g.game_id = $1`,
+        [gameId]
+    )
+    } catch (e) {
+        console.error(e)
+        throw e
+    }
+
+    if (res.rows.length === 0) {
+        return null
+    }
+
+    const gameRow = res.rows[0]
+
+    return {
+        id: gameRow.game_id,
+        currentPhase: gameRow.current_phase,
+        currentTurn: gameRow.current_turn,
+        currentState: gameRow.current_state,
+        players: res.rows.map(playerRow => (
+            {
+                id: playerRow.player_id,
+                name: playerRow.name,
+                isHost: playerRow.is_host
+            }
+        ))
+    }
+}

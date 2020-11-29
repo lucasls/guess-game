@@ -11,7 +11,9 @@ async function joinGame(gameId, playerName) {
 
     repository.joinGame(gameId, player)
 
-    return player.id
+    return {
+        playerId: player.id
+    }
 }
 
 module.exports = joinGame

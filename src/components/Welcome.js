@@ -38,9 +38,6 @@ function Welcome(props) {
             playerId = await joinGame(gameId, playerName)
         }
 
-        Cookie.set('playerId', playerId)
-        Cookie.set('playerName', playerName)
-
         props.onStartGame({
             playerId: playerId,
             playerName: playerName,
