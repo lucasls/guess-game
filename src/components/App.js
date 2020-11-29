@@ -12,6 +12,7 @@ import Cookie from 'js-cookie'
 
 import findGame from '../useCases/findGame'
 import GameState from '../domain/GameState'
+import AddWords from './AddWords.js';
 
 function App() {
 
@@ -69,7 +70,7 @@ function App() {
             case GameState.LOADING_GAME: return (<div>Loading...</div>)
             case GameState.WELCOME: return (<Welcome onStartGame={handleStartGame} />)
             case GameState.JOIN_GAME: return (<Teams gameData={gameData} onTeamComplete={handleTeamComplete} />)
-            case GameState.ADD_WORDS: return (<div>Add your words</div>)
+            case GameState.ADD_WORDS: return (<AddWords />)
         }
     }
 
