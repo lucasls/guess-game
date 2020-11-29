@@ -1,10 +1,13 @@
+import axios from 'axios'
 
-import {v4 as uuidV4} from 'uuid'
+const apiUrl = process.env.REACT_APP_API_URL
 
-function joinGame(playerName) {
-    // TODO call backend
+async function joinGame(gameId, playerName) {
+    let response = await axios.post(`${apiUrl}/games/${gameId}/players/`, {
+        playerName: playerName
+    })
 
-    return uuidV4()
+    return response.data.playerId
 }
 
 export default joinGame
