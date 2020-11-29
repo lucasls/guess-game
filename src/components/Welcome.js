@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useParams, useHistory } from 'react-router-dom'
 import Cookie from 'js-cookie'
 
-import createGame from './useCases/createGame.js'
-import joinGame from './useCases/joinGame.js'
+import createGame from '../useCases/createGame.js'
+import joinGame from '../useCases/joinGame.js'
 
 function Welcome(props) {
 
@@ -36,7 +35,7 @@ function Welcome(props) {
             playerId = gameData.playerId
             gameId = gameData.gameId
         } else {
-            playerId = await joinGame(playerName)
+            playerId = await joinGame(gameId, playerName)
         }
 
         Cookie.set('playerId', playerId)
