@@ -7,6 +7,7 @@ const createGame = require('./useCases/createGame')
 const joinGame = require('./useCases/joinGame')
 const findGame = require('./useCases/findGame')
 const setPlayerTeam = require('./useCases/setPlayerTeam')
+const setGameState = require('./useCases/setGameState')
 
 const app = express();
 
@@ -47,6 +48,11 @@ app.get(
 app.post(
     '/games/:gameId/players/:playerId/set-team',
     handle(async req => await setPlayerTeam(req.params.gameId, req.params.playerId, req.body.team))
+)
+
+app.post(
+    '/games/:gameId/set-state',
+    handle(async req => await setGameState(req.params.gameId, req.body.state))
 )
 
 app.get('/*', (req, res) => {

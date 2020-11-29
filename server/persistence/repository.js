@@ -115,3 +115,14 @@ exports.setPlayerTeam = async function (gameId, playerId, team) {
         ]
     )
 }
+
+exports.setGameState = async function (gameId, state) {
+    await pool.query(`
+        update game g
+        set current_state = $1
+        where g.game_id = $2`,
+        [
+            state, gameId
+        ]
+    )
+}

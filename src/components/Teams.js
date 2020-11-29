@@ -7,6 +7,7 @@ import Team from '../domain/Team'
 import GameState from '../domain/GameState'
 import setPlayerTeam from '../useCases/setPlayerTeam'
 import findGame from '../useCases/findGame'
+import setGameState from '../useCases/setGameState'
 
 function Teams(props) {
     const [game, setGame] = useState(props.gameData.game)
@@ -70,8 +71,9 @@ function Teams(props) {
         return result
     }
 
-    function handleClick() {
-
+    async function handleClick() {
+        const newGame = await setGameState(game.id, GameState.ADD_WORDS)
+        props.onTeamComplete(newGame)
     }
 
     return (
@@ -89,7 +91,7 @@ function Teams(props) {
                 </tbody>
             </table>
 
-            {isHost ? <button onClick={handleClick}>Start Game</button> : "" }
+            {isHost ? <button onClick={handleClick}>Start Game</button> : "Please wait for the host to start the game" }
         </div>
     );
 }
