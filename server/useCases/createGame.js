@@ -2,12 +2,14 @@
 const { v4: uuidv4 } = require('uuid');
 const repository = require('../persistence/repository')
 const GameState = require('../domain/GameState')
+const Team = require('../domain/Team')
 
 async function createGame(playerName) {
     const player = {
         id: uuidv4(),
         name: playerName,
-        isHost: true
+        isHost: true,
+        team: Team.GREEN
     }
     
     const game = {

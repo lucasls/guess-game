@@ -18,6 +18,7 @@ async function init() {
             player_id uuid,
             name text,
             is_host bool,
+            team text,
             primary key(game_id, player_id)
         )
     `)
@@ -50,9 +51,9 @@ init()
 async function createPlayer(gameId, player) {
     await pool.query(`
         insert into player values(
-            $1, $2, $3, $4
+            $1, $2, $3, $4, $5
         )`,
-        [gameId, player.id, player.name, player.isHost]
+        [gameId, player.id, player.name, player.isHost, player.team]
     )
 }
 
@@ -103,7 +104,8 @@ exports.findGame = async function (gameId) {
             {
                 id: playerRow.player_id,
                 name: playerRow.name,
-                isHost: playerRow.is_host
+                isHost: playerRow.is_host,
+                team: playerRow.team
             }
         ))
     }
