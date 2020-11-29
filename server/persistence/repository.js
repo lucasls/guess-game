@@ -75,19 +75,12 @@ exports.joinGame = async function (gameId, player) {
 }
 
 exports.findGame = async function (gameId) {
-    let res
-    
-    try {
-    res = await pool.query(`
+    const res = await pool.query(`
         select * from game g
         join player p on p.game_id = g.game_id
         where g.game_id = $1`,
         [gameId]
     )
-    } catch (e) {
-        console.error(e)
-        throw e
-    }
 
     if (res.rows.length === 0) {
         return null
@@ -109,4 +102,16 @@ exports.findGame = async function (gameId) {
             }
         ))
     }
+}
+
+exports.setPlayerTeam = async function (gameId, playerId, team) {
+    await pool.query(`
+        update player p
+        set team = $1
+        where p.game_id = $2
+        and p.player_id = $3`,
+        [
+            team, gameId, playerId
+        ]
+    )
 }
