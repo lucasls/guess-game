@@ -3,7 +3,8 @@ const express = require("express");
 const path = require('path');
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const { v4: uuidv4 } = require('uuid');
+const createGame = require('./useCases/createGame')
+const joinGame = require('./useCases/joinGame')
 
 const app = express();
 
@@ -16,13 +17,12 @@ if (process.env.USE_CORS) {
     app.use(cors())
 }
 
-app.post('/games/', (req, res) => {
-    console.log(`O jogadador ${req.body.playerName} iniciou o jogo`)
+app.post('/games/', async (req, res) => {
+    res.json(await createGame(req.body.playerName))
+});
 
-    res.json({
-        gameId: uuidv4(),
-        playerId: uuidv4()
-    })
+app.post('/games/:gameId/players/', async (req, res) => {
+    res.json(await joinGame(req.params.gameId, req.body.playerName))
 });
 
 app.get('/*', (req, res) => {
