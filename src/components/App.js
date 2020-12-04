@@ -13,6 +13,7 @@ import Cookie from 'js-cookie'
 import findGame from '../useCases/findGame'
 import GameState from '../domain/GameState'
 import AddWords from './AddWords.js';
+import WaitPlay from './WaitPlay.js'
 
 function App() {
 
@@ -61,6 +62,12 @@ function App() {
             setGame(game)
         }
 
+        function hanldeAllWordsSent() {
+            const newGame = {...game}
+            newGame.currentState = GameState.PLAYING
+            setGame(newGame)
+        }
+
         const gameData = {
             playerId: playerId,
             game: game
@@ -70,7 +77,8 @@ function App() {
             case GameState.LOADING_GAME: return (<div>Loading...</div>)
             case GameState.WELCOME: return (<Welcome onStartGame={handleStartGame} />)
             case GameState.JOIN_GAME: return (<Teams gameData={gameData} onTeamComplete={handleTeamComplete} />)
-            case GameState.ADD_WORDS: return (<AddWords />)
+            case GameState.ADD_WORDS: return (<AddWords onAllWordsSent={hanldeAllWordsSent} />)
+            case GameState.PLAYING: return (<WaitPlay />)
         }
     }
 
@@ -79,7 +87,7 @@ function App() {
             <Switch>
                 <Route path="/:gameId?" >
                     <Current />
-                    <footer>Developed by Lu e Ni</footer>
+                    <footer>Developed by Lucas and Nicole</footer>
                 </Route>
             </Switch>
         </Router>
