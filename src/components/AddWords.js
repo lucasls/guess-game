@@ -5,6 +5,7 @@ import setGameState from '../useCases/setGameState';
 import './AddWords.css'
 import WaitPlay from './WaitPlay';
 import delay from 'delay'
+import { addWords, findPlayerWords, findPlayersWithoutWords } from '../useCases/useCases'
 
 
 
@@ -12,10 +13,38 @@ const NUM_WORDS = 5
 
 function AddWords(props) {
 
-    const [words, setWords] = useState(Array(NUM_WORDS).fill(""))
+    const [words, setWords] = useState([])
     const [ready, setReady] = useState(false)
+    const [remainingPlayers, setRemainingPlayers] = useState(null)
 
+    const playerId = props.gameData.playerId
+    const gameId = props.gameData.game.id
 
+    useEffect(async () => {
+        const words = await findPlayerWords(gameId, playerId)
+
+        if (words.length === 5) {
+            setWords(words)
+            await wordsReady()
+        } else {
+            setWords(Array(NUM_WORDS).fill(""))
+        }
+    }, [])
+
+    async function wordsReady() {
+        setReady(true)
+
+        let playersWithoutWords
+        do {
+            playersWithoutWords = await findPlayersWithoutWords(gameId)
+            setRemainingPlayers(playersWithoutWords)
+            await delay(1000)
+        } while(playersWithoutWords.length !== 0)
+
+        await delay(2000)
+
+        props.onAllWordsSent()
+    }
 
     function wordInput(word, i) {
         function handleChange(event) {
@@ -38,49 +67,59 @@ function AddWords(props) {
         </p>
     }
 
-    // if the gamer didn't write 5 words, alert she or he if had goes to the wait room
-
-    function handleClick() {
+    async function handleClick() {
         const emptyInput = words.some(word => word === "")
 
         if (emptyInput) {
-            alert("mano tya vazia")
-        } else {
-            setReady(true)
+            alert(`Please write all ${NUM_WORDS} words`)
+            return
         }
+        
+        await addWords(gameId, playerId, words)
+        
+        await wordsReady()
     }
 
-        function startGame() {
-            props.onAllWordsSent()
-        }
-    
 
-        if (ready) {
-            // while all the gamers didn't finished to send the words
-            // return <div className="components-body">
-            //     <h2>We'll start soon</h2>
-            //     <p> Please wait until all the gamers finish sending the words.</p>
-            //     <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
-            // </div>
-            // when all the gamers finish
+    if (ready && remainingPlayers) {
+
+        if (remainingPlayers.length !== 0) {
             return <div className="components-body">
-                <h2 className="ready-text">Everybody ready?</h2>
-                <h2> Let's start!</h2>
-                <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
-                {setTimeout(startGame, 2000)}
+                <h2>We'll start soon</h2>
+                <p> Please wait until all the gamers finish sending the words.</p>
+                <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
+                <ul>
+                    { remainingPlayers.map(p => <p> {p.name} didn't send their words </p>) }
+                </ul>
             </div>
         }
+
+        return <div className="components-body">
+            <h2 className="ready-text">Everybody ready?</h2>
+            <h2> Let's start!</h2>
+            <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
+        </div>
+    }
+
+    if (words.length === 0) {
         return (
             <div className="components-body">
-                <h2>Add {NUM_WORDS} words or expressions</h2>
-                <p>Please write international references otherwise the other players might not know about what it is!</p>
-                <p className="p-tip"> Tips: singers, songs, movies, companies, actors/actresses, characters, politicians, etc </p>
-                {words.map(wordInput)}
-                <button type="submit" onClick={handleClick}> Send words</button>
+                Loading...
             </div>
-        );
-    
-
+        )
     }
 
-    export default AddWords;
+    return (
+        <div className="components-body">
+            <h2>Add {NUM_WORDS} words or expressions</h2>
+            <p>Please write international references otherwise the other players might not know about what it is!</p>
+            <p className="p-tip"> Tips: singers, songs, movies, companies, actors/actresses, characters, politicians, etc </p>
+            {words.map(wordInput)}
+            <button type="submit" onClick={handleClick}> Send words</button>
+        </div>
+    );
+
+
+}
+
+export default AddWords;

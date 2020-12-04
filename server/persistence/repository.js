@@ -128,3 +128,62 @@ exports.setGameState = async function (gameId, state) {
         ]
     )
 }
+
+exports.addWords = async function(gameId, words) {
+    await pool.query(`
+        delete from word w
+        where w.game_id = $1 and w.player_id = $2
+        `,
+        [
+            gameId, words[0].playerId
+        ]
+    )
+
+    for (let word of words) {
+        await pool.query(`
+            insert into word values(
+                $1, $2, $3, $4
+            )`,
+            [
+                gameId, word.id, word.content, word.playerId
+            ]
+        )
+    }
+}
+
+exports.findPlayerWords = async function(gameId, playerId) {
+    const res =  await pool.query(`
+        select * from word w
+        where w.game_id = $1 and w.player_id = $2
+        `,
+        [
+            gameId, playerId
+        ]
+    )
+
+    return res.rows.map(row => ({
+        id: row.word_id,
+        playerId: playerId,
+        content: row.content
+    }))
+}
+
+exports.findPlayersWithoutWords = async function(gameId) {
+    const res =  await pool.query(`
+        select * from player p
+        where p.game_id = $1
+        and p.player_id not in (
+            select w.player_id from word w
+            where w.game_id = p.game_id
+        )
+        `,
+        [gameId]
+    )
+
+    return res.rows.map(row =>  ({
+        id: row.player_id,
+        name: row.name,
+        isHost: row.is_host,
+        team: row.team
+    }))
+}

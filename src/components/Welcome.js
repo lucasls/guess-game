@@ -19,7 +19,8 @@ function Welcome(props) {
 
     
 
-    async function handleClick() {
+    async function handleSubmit(e) {
+        e.preventDefault()
         const trimmedName = playerName.trim()
 
         setPlayerName(trimmedName)
@@ -53,13 +54,15 @@ function Welcome(props) {
             <h1 className="blink-text"> Guess Game </h1>
             <h2>Welcome!</h2>
             <p>{!gameId ? "Please write your name down to create a new game." : "Please write your name down to join the game."}</p>
-            <input 
-            type="text" 
-            value={playerName} 
-            placeholder = "Your name or nickname"
-            onChange={handleChange} />
+            <form onSubmit={handleSubmit}>
+                <input 
+                type="text" 
+                value={playerName} 
+                placeholder = "Your name or nickname"
+                onChange={handleChange} />
 
-            <button type="submit" onClick={handleClick}>{!gameId ? "Create Game" : "Join Game"}</button>
+                <button type="submit">{!gameId ? "Create Game" : "Join Game"}</button>
+            </form>
         </div>
     );
 }
