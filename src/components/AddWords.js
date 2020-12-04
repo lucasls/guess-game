@@ -1,8 +1,11 @@
 import { set } from 'js-cookie';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GameState from '../domain/GameState';
 import setGameState from '../useCases/setGameState';
 import './AddWords.css'
+import WaitPlay from './WaitPlay';
+import delay from 'delay'
+
 
 
 const NUM_WORDS = 5
@@ -11,6 +14,8 @@ function AddWords(props) {
 
     const [words, setWords] = useState(Array(NUM_WORDS).fill(""))
     const [ready, setReady] = useState(false)
+
+
 
     function wordInput(word, i) {
         function handleChange(event) {
@@ -38,41 +43,44 @@ function AddWords(props) {
     function handleClick() {
         const emptyInput = words.some(word => word === "")
 
-        if(emptyInput) {
+        if (emptyInput) {
             alert("mano tya vazia")
         } else {
             setReady(true)
         }
+    }
 
-        // TODO replace with real code
-        if (words[0] === "PLAY") {
+        function startGame() {
             props.onAllWordsSent()
         }
+    
+
+        if (ready) {
+            // while all the gamers didn't finished to send the words
+            // return <div className="components-body">
+            //     <h2>We'll start soon</h2>
+            //     <p> Please wait until all the gamers finish sending the words.</p>
+            //     <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
+            // </div>
+            // when all the gamers finish
+            return <div className="components-body">
+                <h2 className="ready-text">Everybody ready?</h2>
+                <h2> Let's start!</h2>
+                <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
+                {setTimeout(startGame, 2000)}
+            </div>
+        }
+        return (
+            <div className="components-body">
+                <h2>Add {NUM_WORDS} words or expressions</h2>
+                <p>Please write international references otherwise the other players might not know about what it is!</p>
+                <p className="p-tip"> Tips: singers, songs, movies, companies, actors/actresses, characters, politicians, etc </p>
+                {words.map(wordInput)}
+                <button type="submit" onClick={handleClick}> Send words</button>
+            </div>
+        );
+    
+
     }
 
-    if(ready) {
-        // while all the gamers didn't finished to send the words
-        // return <div className="components-body">
-        //     <h2>We'll start soon</h2>
-        //     <p> Please wait until all the gamers finish sending the words.</p>
-        //     <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
-        // </div>
-        // when all the gamers finish
-        return <div className="components-body">
-            <h2 className="ready-text">Everybody ready?</h2>
-            <h2> Let's start!</h2>
-            <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
-        </div>
-    }
-    return (
-        <div className="components-body">
-            <h2>Add {NUM_WORDS} words or expressions</h2>
-            <p>Please write international references otherwise the other players might not know about what it is!</p>
-            <p className="p-tip"> Tips: singers, songs, movies, companies, actors/actresses, characters, politicians, etc </p>
-            {words.map(wordInput)}
-            <button type="submit" onClick={handleClick}> Send words</button>
-        </div>
-    );
-}
-
-export default AddWords;
+    export default AddWords;

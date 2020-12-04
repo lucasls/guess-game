@@ -71,7 +71,7 @@ function App() {
 
         const gameData = {
             playerId: playerId,
-            game: game
+            game: game,
         }
 
         switch (gameState) {
@@ -79,7 +79,7 @@ function App() {
             case GameState.WELCOME: return (<Welcome onStartGame={handleStartGame} />)
             case GameState.JOIN_GAME: return (<Teams gameData={gameData} onTeamComplete={handleTeamComplete} />)
             case GameState.ADD_WORDS: return (<AddWords onAllWordsSent={hanldeAllWordsSent} />)
-            case GameState.PLAYING: return (<WaitPlay />)
+            case GameState.PLAYING: return (<WaitPlay gameData={gameData} />)
         }
     }
 

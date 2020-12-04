@@ -1,36 +1,82 @@
 import React, { useState } from 'react';
-
-function WaitPlay() {
-
-    const [round, setRound] = useState([1])
-
-    // if all the players tiverem terminado -função que estará nas palavras
-    // retornar a tela de ready e dar setTime out para comecar o jogo
-
-    // se for a vez do jogador retornar as palavras
-
-    // se for a vez do meu time
-
-    // se não for a vez do meu time
+import './WaitPlay.css'
 
 
+function WaitPlay(props) {
+    // const game = props.gameData.game
+    // const playerNow = props.gameData.game.players[0]
+    // const playerId = props.gameData.playerId
+    // const phase = props.gameData.currentPhase
+    // const [round, setRound]= useState()
+    
+    // function instructions() {
+    //     let phaseText
+    //     if(phase === 0) {
+    //         setTimeout(playerAndTeam, 3000)
+    //         phaseText = "One player receives one word/expression and have to explain for the team without saiyng exacly the word neither use synonyms;"
+    //     }else if(phase === 2) {
+    //                 setTimeout(playerAndTeam, 3000)
+    //         phaseText = "One player receives one word/expression and have to explain for the team with just ONE word"
+    //     } else if(phase === 3) {
+    //                 setTimeout(playerAndTeam, 3000)
+    //         phaseText = "One player receives one word/expression and have to explain for the team by mimicry"
+    //     }    
+    //     return <div>
+    //             <p>{phaseText}</p>
+    //             <p>The player's team have to hit the word by writing it in the input box;</p>
+    //             <p>When the answer is right the player receive a new world while there's time!</p>
+    //         </div>
+    // }
 
-    return <div className="components-body">
-        <h1> Round {round} </h1>
-        <ul>
-            {/* <li>{roundText}</li> */}
-            <li>One player receives one word/expression and have to explain for the team without saiyng exacly the word neither use synonyms; </li>
-            <li>The player's team have to hit the word by writing it in the input box;</li>
-            <li>When the answer is right the player receive a new world while there's time!</li>
-        </ul>
-        <p>Atention!</p>
-        <ul>
-            <li>Each player's turn lasts 5 minutes;</li>
-            <li>If the word is too hard, it can be skiped but the player will lose 2 seconds</li>
-        </ul>
+    // function handleChange(event) {
+    //     event.targer.value
+    // }
 
-        <p>First player: Nicole</p>
+    // function playerAndTeam() {
 
+    //     if(round === instructions) {
+    //         instruction()
+    //     }
+    //     if(round ===gamer) {
+    //         return <div>
+    //             {/* <p>{playWord}</p> */}
+    //             <button>Skip</button>
+    //         </div>
+    //     }
+    //     if(round === team) {
+    //         return <div>
+    //             {/* <input }></input> */}
+    //             <button> Send </button>
+    //         </div>
+    //     }
+
+    //     if(round === againstTime) {
+    //         return <div>
+    //             <p>It's {playerNow.team} turn, mute your mic please!</p>
+    //             <i class="fas fa-microphone-slash"></i>
+    //         </div>
+    //     }
+
+    // }
+
+    // setRound(instructions)
+
+    // return <div className="components-body wait-play-component">
+        {/* <p>Green<span>{greenPoints}</span>x<span>{bluePoints}</span>Blue</p> */}
+        // <h1> Round {phase} </h1>
+        {/* <p>Remaining words: {remainingWords}</p> */}
+
+    //     {playerAndTeam}
+
+    //     <p>Now: {playerNow}</p>
+    //     <p>Next: {props.gameData.game.players[1]}</p>
+
+    // </div>
+
+    // console.log(props.allplayers)
+
+    return <div>
+        <p>Rolou...</p>
     </div>
 }
 
