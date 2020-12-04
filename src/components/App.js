@@ -24,15 +24,17 @@ function App() {
         let { gameId } = useParams();
         const playerId = Cookie.get("playerId")
 
-        async function loadGame() {
-            const game = await findGame(gameId)
+        useEffect(async () => {
+            if (gameId && playerId) {
+                const game = await findGame(gameId)
 
-            if (!game) {
-                history.push("/")
-            } else {
-                setGame(game)
+                if (!game) {
+                    history.push("/")
+                } else {
+                    setGame(game)
+                }
             }
-        }
+        }, [])
 
         const hasPlayer = () => game.players
             .map(it => it.id)
@@ -44,7 +46,6 @@ function App() {
             gameState = GameState.WELCOME
         } else if (!game) {
             gameState = GameState.LOADING_GAME
-            loadGame()
         } else if (!hasPlayer()) {
             gameState = GameState.WELCOME
         } else {
