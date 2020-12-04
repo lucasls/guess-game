@@ -8,6 +8,8 @@ import GameState from '../domain/GameState'
 import setPlayerTeam from '../useCases/setPlayerTeam'
 import findGame from '../useCases/findGame'
 import setGameState from '../useCases/setGameState'
+import './Teams.css'
+
 
 function Teams(props) {
     const [game, setGame] = useState(props.gameData.game)
@@ -60,10 +62,10 @@ function Teams(props) {
 
             result.push(
                 <tr key={i}>
-                    <td style={{ fontWeight: greenIsMe ? "bold" : "normal" }}>{greenPlayer?.name || ""}</td>
-                    <td>{isHost && hasGreen ? <button onClick={() => movePlayer(greenPlayer)}>{"=>"}</button> : ""}</td>
-                    <td>{isHost && hasBlue ? <button onClick={() => movePlayer(bluePlayer)}>{"<="}</button> : ""}</td>
-                    <td style={{ fontWeight: blueIsMe ? "bold" : "normal" }}>{bluePlayer?.name || ""}</td>
+                    <td style={{ fontWeight: greenIsMe ? "bold" : "normal", color:"green" }}>{greenPlayer?.name || ""}</td>
+                    <td>{isHost && hasGreen ? <i class="fas fa-arrow-circle-right fa-arrow" onClick={() => movePlayer(greenPlayer)}></i> : ""}</td>
+                    <td>{isHost && hasBlue ? <i class="fas fa-arrow-circle-left fa-arrow" onClick={() => movePlayer(bluePlayer)}></i> : ""}</td>
+                    <td style={{ fontWeight: blueIsMe ? "bold" : "normal", color: "blue" }}>{bluePlayer?.name || ""}</td>
                 </tr>
             )
         }
@@ -77,19 +79,22 @@ function Teams(props) {
     }
 
     return (
-        <div>
+        <div className="components-body teams-component">
             <h2>Invite Link</h2>
             <input type="text" value={window.location} readOnly />
+            <p className="p-invite">Invite your friends to play with you!</p>
 
             <h2>Teams</h2>
+            <div className="team-table">
             <table>
                 <thead>
-                    <tr><th>Green</th><th></th><th></th><th>Blue</th></tr>
+                    <tr><th className="th-green">Green</th><th></th><th></th><th className="th-blue">Blue</th></tr>
                 </thead>
                 <tbody>
                     {lines()}
                 </tbody>
             </table>
+            </div>
 
             {isHost ? <button onClick={handleClick}>Start Game</button> : "Please wait for the host to start the game" }
         </div>
