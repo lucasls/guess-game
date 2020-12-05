@@ -5,10 +5,14 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const createGame = require('./useCases/createGame')
 const joinGame = require('./useCases/joinGame')
-const findGame = require('./useCases/findGame')
 const setPlayerTeam = require('./useCases/setPlayerTeam')
 const setGameState = require('./useCases/setGameState');
-const { addWords, findPlayerWords, findPlayersWithoutWords } = require('./useCases/useCases');
+const { 
+    findGame,
+    addWords, 
+    findPlayerWords, 
+    findPlayersWithoutWords
+ } = require('./useCases/useCases');
 
 const app = express();
 
