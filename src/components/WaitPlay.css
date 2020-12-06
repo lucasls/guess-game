@@ -1,4 +1,37 @@
+.wait-play-component {
+    padding: 15px 25px;
+}
+
+.wait-play-component h1 {
+    font-size: 4.5vmax;
+    margin: 0;
+}
+
+.wait-play-component h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
 .wait-play-component p {
+    margin: 0;
+    padding: 10px 10px 
+}
+.wait-play-component i {
+    padding-right: 10px;
+    color:yellow;
+}
+
+.wait-play-information, .wait-play-header {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: auto;
+    padding: 3px 5px;
+    width: 100%;
+}
+
+.wait-play-information p, .wait-play-header p {
     font-size: 1.2rem;
-    padding-bottom: 20px;
+    margin: auto;
+    padding: 0;
 }
