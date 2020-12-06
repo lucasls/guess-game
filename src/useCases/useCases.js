@@ -20,3 +20,6 @@ export async function findPlayersWithoutWords(gameId) {
     return response.data.players
 }
 
+export async function startTurn(gameId) {
+    await axios.post(`${apiUrl}/games/${gameId}/start-turn`)
+}

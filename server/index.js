@@ -11,7 +11,8 @@ const {
     findGame,
     addWords, 
     findPlayerWords, 
-    findPlayersWithoutWords
+    findPlayersWithoutWords,
+    startTurn
  } = require('./useCases/useCases');
 
 const app = express();
@@ -77,6 +78,11 @@ app.get(
     handle(async req => ({
         players: await findPlayersWithoutWords(req.params.gameId)
     }))
+)
+
+app.post(
+    '/games/:gameId/start-turn',
+    handle(async req => await startTurn(req.params.gameId))
 )
 
 app.get('/*', (req, res) => {

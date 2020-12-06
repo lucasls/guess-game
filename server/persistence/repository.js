@@ -36,16 +36,21 @@ async function init() {
     `)
 
     await pool.query(`
-        create table if not exists turn_player_word (
+        drop table if exists turn_player_word
+    `)
+
+    await pool.query(`
+        create table if not exists turn (
             game_id uuid,
             phase int,
-            turn int,
+            turn_order int,
             player_id uuid,
-            word_id uuid,
-            guessed bool,
-            primary key(game_id, phase, turn)
+            player_order int,
+            started_at timestamptz,
+            primary key(game_id, phase, turn_order)
         )
     `)
+
 }
 
 init()
@@ -186,4 +191,35 @@ exports.findPlayersWithoutWords = async function(gameId) {
         isHost: row.is_host,
         team: row.team
     }))
+}
+
+exports.findTurn = async function(gameId, phase, turnOrder) {
+    const res =  await pool.query(`
+        select * from turn t
+        where t.game_id = $1
+        and t.phase = $2
+        and t.turn_order = $3
+        `,
+        [gameId, phase, turnOrder]
+    )
+
+    if (res.rows.length === 0) {
+        return null
+    }
+
+    return res.rows.map(row =>  ({
+        order: row.turn_order,
+        playerId: row.player_id,
+        playerOrder: row.player_order,
+        startedAt: row.started_at
+    }))[0]
+}
+
+exports.createTurn = async function(gameId, phase, turn) {
+    await pool.query(`
+        insert into turn values(
+            $1, $2, $3, $4, $5, $6
+        )`,
+        [gameId, phase, turn.order, turn.playerId, turn.playerOrder, turn.startedAt]
+    )
 }
