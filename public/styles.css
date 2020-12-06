@@ -1,18 +1,19 @@
 body {
-    align-items: center;
+    align-items: stretch;
     background-image: url('question-img.jpg');
     color: white;
-    display: flex;
     font-family: 'Barlow Condensed', sans-serif;
     height: 100%;
     justify-content: center;
     padding-top: 30px;
     text-align: center;
+
+
 }
 
 h1 {
     font-family: 'Bungee Shade', cursive;
-    font-size: 6vmax;
+    font-size: 5vmax;
     margin-top: 0;
 }
     
@@ -30,7 +31,6 @@ input {
     box-sizing: border-box;
     display: grid;
     margin: auto;
-    width: 100%;
     padding: 12px 20px;
 }
 
@@ -54,5 +54,25 @@ button {
     padding: 10px 15px 20px;
 }
 
+.alert {
+    width: 50px;
+    height: 50px;
+    background-color: greenyellow;
+}
+
+@media only screen and (min-width: 760px) {
+  .components-body {
+    height: 538px;
+    margin: auto;
+    padding-bottom: 20px;
+    position: relative;
+    top: 5%;
+    width: 620px;
+    }
+
+    .input {
+        width: 100%;
+    }
+}
 
 
