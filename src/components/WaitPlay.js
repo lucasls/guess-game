@@ -124,7 +124,7 @@ function WaitPlay(props) {
     return <div className="components-body wait-play-component">
 
         <div className="wait-play-header">
-            <p>Remaining words: {remainingWords}</p>
+            <p>Remaining words: {game.currentPhaseInfo.remainingWords}</p>
             <p>Green <span>{greenPoints}</span> x <span>{bluePoints}</span> Blue</p>
         </div>
 

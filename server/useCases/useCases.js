@@ -35,6 +35,14 @@ async function getAndUpdateCurrentTurn(game) {
     return currentTurnInfo
 }
 
+async function getAndUpdateCurrentPhase(game) {
+    const remainingWords = await repository.findNumRemainingWordsInPhase(game.id, game.currentPhase)
+
+    return {
+        remainingWords: remainingWords
+    }
+}
+
 exports.findGame = async function(gameId) {
     const game = await repository.findGame(gameId)
 
@@ -48,6 +56,7 @@ exports.findGame = async function(gameId) {
 
         game.playersByTeam = groupArray(game.players, p => p.team)
         game.currentTurnInfo = await getAndUpdateCurrentTurn(game)
+        game.currentPhaseInfo = await getAndUpdateCurrentPhase(game)
 
         async function getPrevTurnPlayerOrder(turn) {
             const prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)

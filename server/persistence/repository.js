@@ -51,6 +51,19 @@ async function init() {
         )
     `)
 
+    await pool.query(`
+        create table if not exists turn_word (
+            game_id uuid,
+            phase int,
+            turn_order int,
+            word_order int,
+            word_id uuid,
+            guessed bool,
+            skipped bool,
+            primary key(game_id, phase, turn_order, word_order)
+        )
+    `)
+
 }
 
 init()
@@ -231,4 +244,46 @@ exports.updateGameTurn = async function(gameId, turn) {
         where game_id = $2`,
         [turn, gameId]
     )
+}
+
+exports.findNumRemainingWordsInPhase = async function(gameId, phase) {
+    const res =  await pool.query(`
+        select count(*) from word w
+        where true
+        and (w.game_id, w.word_id) not in (
+            select game_id, word_id
+            from turn_word tw
+            where w.game_id = tw.game_id
+            and w.word_id = tw.word_id
+            and tw.phase = $1
+            and tw.guessed
+        )
+        and w.game_id = $2`,
+        [phase, gameId]
+    )
+
+    return res.rows[0].count
+}
+
+exports.findRemainingWordsInPhase = async function(gameId, phase) {
+    const res =  await pool.query(`
+        select w.* from word w
+        where true
+        and (w.game_id, w.word_id) not in (
+            select game_id, word_id
+            from turn_word tw
+            where w.game_id = tw.game_id
+            and w.word_id = tw.word_id
+            and tw.phase = $1
+            and tw.guessed
+        )
+        and w.game_id = $2`,
+        [phase, gameId]
+    )
+
+    return res.rows.map(row => ({
+        id: row.word_id,
+        playerId: playerId,
+        content: row.content
+    }))
 }
