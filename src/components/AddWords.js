@@ -84,8 +84,8 @@ function AddWords(props) {
     if (ready && remainingPlayers) {
 
         if (remainingPlayers.length !== 0) {
-            return <div className="components-body">
-                <h2>We'll start soon</h2>
+            return <div className="components-body gif-text">
+                <h2 className="add-words-text">We'll start soon</h2>
                 <p> Please wait until all the gamers finish sending the words.</p>
                 <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
                 <ul>
@@ -94,7 +94,7 @@ function AddWords(props) {
             </div>
         }
 
-        return <div className="components-body">
+        return <div className="components-body gif-text">
             <h2 className="ready-text">Everybody ready?</h2>
             <h2> Let's start!</h2>
             <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
@@ -110,9 +110,9 @@ function AddWords(props) {
     }
 
     return (
-        <div className="components-body">
+        <div className="components-body add-words">
             <h2>Add {NUM_WORDS} words or expressions</h2>
-            <p>Please write international references otherwise the other players might not know about what it is!</p>
+            <p className="add-words-sub">Please write international references otherwise the other players might not know about what it is!</p>
             <p className="p-tip"> Tips: singers, songs, movies, companies, actors/actresses, characters, politicians, etc </p>
             {words.map(wordInput)}
             <button type="submit" onClick={handleClick}> Send words</button>

@@ -1,7 +1,27 @@
+.add-words h2 {
+    margin: 0;
+}
+.add-words button {
+    margin: 0
+}
+.add-words-sub {
+    margin: 5px;
+}
 .p-tip {
     font-size: 1rem;
+    margin: 0;
 }
 
 .ready-text {
     margin: 0;
+}
+
+.gif-text {
+    margin-bottom: 5%;
+}
+
+.add-words img {
+    height: auto;
+    width: 100%;
+
 }

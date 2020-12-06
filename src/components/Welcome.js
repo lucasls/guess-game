@@ -16,9 +16,7 @@ function Welcome(props) {
     function handleChange(event) {
         setPlayerName(event.target.value)
     }
-
-    
-
+ 
     async function handleSubmit(e) {
         e.preventDefault()
         const trimmedName = playerName.trim()
@@ -26,8 +24,8 @@ function Welcome(props) {
         setPlayerName(trimmedName)
 
         if (trimmedName === "") {
-            alert("Please write your name")
-            return
+            alert("write your name please")
+            return 
         }
 
         let playerId
@@ -58,7 +56,7 @@ function Welcome(props) {
                 <input 
                 type="text" 
                 value={playerName} 
-                placeholder = "Your name or nickname"
+                placeholder = "Name or nickname"
                 onChange={handleChange} />
 
                 <button type="submit">{!gameId ? "Create Game" : "Join Game"}</button>
