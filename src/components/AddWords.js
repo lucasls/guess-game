@@ -1,15 +1,15 @@
 import { set } from 'js-cookie';
 import React, { useState, useEffect } from 'react';
-import GameState from '../domain/GameState';
-import setGameState from '../useCases/setGameState';
+
 import './AddWords.css'
-import WaitPlay from './WaitPlay';
 import delay from 'delay'
 import { addWords, findPlayerWords, findPlayersWithoutWords } from '../useCases/useCases'
-
+import ImagePreloader from 'image-preloader'
 
 
 const NUM_WORDS = 5
+const IMG_WAITING = "https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"
+const IMG_START = "https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"
 
 function AddWords(props) {
 
@@ -21,6 +21,9 @@ function AddWords(props) {
     const gameId = props.gameData.game.id
 
     useEffect(async () => {
+        ImagePreloader.simplePreload(IMG_WAITING)
+        ImagePreloader.simplePreload(IMG_START)
+
         const words = await findPlayerWords(gameId, playerId)
 
         if (words.length === 5) {
@@ -41,7 +44,7 @@ function AddWords(props) {
             await delay(1000)
         } while(playersWithoutWords.length !== 0)
 
-        await delay(2000)
+        await delay(3000)
 
         props.onAllWordsSent()
     }
@@ -87,7 +90,7 @@ function AddWords(props) {
             return <div className="components-body gif-text">
                 <h2 className="add-words-text">We'll start soon</h2>
                 <p> Please wait until all the gamers finish sending the words.</p>
-                <img src="https://media.giphy.com/media/UuebWyG4pts3rboawU/giphy-downsized.gif"></img>
+                <img src={IMG_WAITING}></img>
                 <ul>
                     { remainingPlayers.map(p => <p> {p.name} didn't send their words </p>) }
                 </ul>
@@ -97,7 +100,7 @@ function AddWords(props) {
         return <div className="components-body gif-text">
             <h2 className="ready-text">Everybody ready?</h2>
             <h2> Let's start!</h2>
-            <img src="https://media.giphy.com/media/qzJPSZ0mClSUw/giphy-downsized.gif"></img>
+            <img src={IMG_START}></img>
         </div>
     }
 
