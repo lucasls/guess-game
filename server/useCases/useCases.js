@@ -5,7 +5,7 @@ const GameState = require('../domain/GameState');
 const groupArray = require('group-array');
 const Team = require('../domain/Team');
 
-const TURN_DURATION_SECONDS = 10
+const TURN_DURATION_SECONDS = 60
 
 function getTurnPlayer(playersByTeam, turn, playerOrder) {
     const team = turn % 2 === 0 ? Team.GREEN : Team.BLUE
@@ -57,6 +57,7 @@ exports.findGame = async function(gameId) {
         game.playersByTeam = groupArray(game.players, p => p.team)
         game.currentTurnInfo = await getAndUpdateCurrentTurn(game)
         game.currentPhaseInfo = await getAndUpdateCurrentPhase(game)
+        game.wordToGuess = await repository.findNextWord(game.id, game.currentPhase, game.currentTurn)
 
         async function getPrevTurnPlayerOrder(turn) {
             const prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)
@@ -104,7 +105,7 @@ exports.findPlayersWithoutWords = async function(gameId) {
     return await repository.findPlayersWithoutWords(gameId)
 }
 
-exports.startTurn = async function(gameId){
+exports.startTurn = async function(gameId) {
     const game = await repository.findGame(gameId)
     const prevTurn = await repository.findTurn(gameId, game.currentPhase, game.currentTurn - 2)
 
@@ -127,4 +128,25 @@ exports.startTurn = async function(gameId){
     }
 
     await repository.createTurn(game.id, game.currentPhase, turn)
+
+    const remainingWords = await repository.findRemainingWordsInPhaseRandomly(game.id, game.currentPhase)
+
+    await repository.addWordsToTurn(game.id, game.currentPhase, game.currentTurn, remainingWords)
+}
+
+function normalize(str) {
+    return str.trim().replaceAll(/\s+/g, " ").toLowerCase()
+}
+
+exports.guessWord = async function(gameId, word) {
+    const game = await repository.findGame(gameId)
+    const wordToGuess = await repository.findNextWord(game.id, game.currentPhase, game.currentTurn)
+
+    const isCorrect = normalize(word) === normalize(wordToGuess.content)
+
+    if (isCorrect) {
+        repository.setWordIsGuessed(game.id, game.currentPhase, game.currentTurn, wordToGuess.id)
+    }
+
+    return isCorrect
 }

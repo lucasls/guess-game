@@ -12,7 +12,8 @@ const {
     addWords, 
     findPlayerWords, 
     findPlayersWithoutWords,
-    startTurn
+    startTurn,
+    guessWord
  } = require('./useCases/useCases');
 
 const app = express();
@@ -83,6 +84,13 @@ app.get(
 app.post(
     '/games/:gameId/start-turn',
     handle(async req => await startTurn(req.params.gameId))
+)
+
+app.post(
+    '/games/:gameId/guesses/',
+    handle(async req => ({
+        isCorrect: await guessWord(req.params.gameId, req.body.word)
+    }))
 )
 
 app.get('/*', (req, res) => {

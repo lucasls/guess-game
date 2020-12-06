@@ -59,7 +59,7 @@ async function init() {
             word_order int,
             word_id uuid,
             guessed bool,
-            skipped bool,
+            skips int,
             primary key(game_id, phase, turn_order, word_order)
         )
     `)
@@ -265,7 +265,7 @@ exports.findNumRemainingWordsInPhase = async function(gameId, phase) {
     return res.rows[0].count
 }
 
-exports.findRemainingWordsInPhase = async function(gameId, phase) {
+exports.findRemainingWordsInPhaseRandomly = async function(gameId, phase) {
     const res =  await pool.query(`
         select w.* from word w
         where true
@@ -277,13 +277,85 @@ exports.findRemainingWordsInPhase = async function(gameId, phase) {
             and tw.phase = $1
             and tw.guessed
         )
-        and w.game_id = $2`,
+        and w.game_id = $2
+        order by random()`,
         [phase, gameId]
     )
 
     return res.rows.map(row => ({
         id: row.word_id,
-        playerId: playerId,
+        playerId: row.player_id,
         content: row.content
     }))
+}
+
+
+exports.addWordsToTurn = async function(gameId, phase, turnOrder, words) {
+    for (let i=0; i < words.length; i++) {
+        await pool.query(`
+            insert into turn_word values(
+                $1, $2, $3, $4, $5, $6, $7
+            )`,
+            [
+                gameId, phase, turnOrder, i, words[i].id, false, 0
+            ]
+        )
+    }
+}
+
+
+exports.findNextWord = async function(gameId, phase, turnOrder) {
+
+    const res =  await pool.query(`
+        select w.* from word w
+        join turn_word tw
+        on w.game_id = tw.game_id
+        and w.word_id = tw.word_id
+        where tw.game_id = $1
+        and tw.phase = $2
+        and tw.turn_order = $3
+        and tw.guessed = $4
+        order by tw.skips, tw.word_order
+        limit 1`,
+        [gameId, phase, turnOrder, false]
+    )
+
+    if (res.rows.length === 0) {
+        return null
+    }
+
+    return res.rows.map(row =>  ({
+        id: row.word_id,
+        playerId: row.player_id,
+        content: row.content
+    }))[0]
+    
+}
+
+exports.setWordIsGuessed = async function(gameId, phase, turnOrder, wordId) {
+    await pool.query(`
+        update turn_word
+        set guessed = $1
+        where game_id = $2
+        and phase = $3
+        and turn_order = $4
+        and word_id = $5`,
+        [
+            true, gameId, phase, turnOrder, wordId
+        ]
+    )
+}
+
+exports.skipWord = async function(gameId, phase, turnOrder, wordId) {
+    await pool.query(`
+        update turn_word
+        set skips = skips + 1
+        where game_id = $1
+        and phase = $2
+        and turn_order = $3
+        and word_id = $4`,
+        [
+            gameId, phase, turnOrder, wordId
+        ]
+    )
 }

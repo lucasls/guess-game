@@ -2,11 +2,13 @@ import delay from 'delay';
 import React, { useEffect, useState } from 'react';
 import './WaitPlay.css'
 import findGame from '../useCases/findGame'
-import { startTurn } from '../useCases/useCases';
+import { guessWord, startTurn } from '../useCases/useCases';
 
 
 function WaitPlay(props) {
     const [game, setGame] = useState(props.gameData.game)
+    const [guess, setGuess] = useState("")
+    const [lastGuessIndicator, setLastGuessIndicator] = useState("neutral")
 
     const playerId = props.gameData.playerId
     const player = game.players.find(player => player.id === playerId)
@@ -20,9 +22,17 @@ function WaitPlay(props) {
         currentTurnStartedAt = null
     }
 
+    function capitalizeTeam(teamName) {
+        return teamName.charAt(0).toUpperCase() + teamName.slice(1).toLowerCase()
+    }
+
     async function updateGame() {
         const newGame = await findGame(game.id)
         setGame(newGame)
+
+        if (!newGame.currentTurnInfo) {
+            setGuess("")
+        }
     }
 
     useEffect(() => {
@@ -46,19 +56,21 @@ function WaitPlay(props) {
                 phaseText = "One player receives one word/expression and have to explain for the team by mimicry"
                 break;
         }
-        console.log(game.currentPlayer)
 
         return <div>
             <p><i class="fas fa-user-alt"></i><b>{phaseText}</b></p>
             <p><i class="fas fa-users"></i>The player's team have to hit the word by writing it in the input box;</p>
             <p><i class="fas fa-user-plus"></i>When the answer is right the player receive a new world while there's time!</p>
-            <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black" }}><b>
-                {game.currentPlayer ? "Team " + game.currentPlayer.team + " will start this phase" : "Have no players yet"}</b></h2>
+            <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black" }}>
+                {game.currentPlayer ? "Team " + capitalizeTeam(game.currentPlayer.team) + " goes next" : "Have no players yet"}</h2>
 
         </div>
     }
 
-
+    const teamsTurn = <span style={{ color: game.currentPlayer?.team || "", textShadow: "2px 2px black"}}>
+        Team {capitalizeTeam(game.currentPlayer.team)}
+    </span>
+        
     function playerAndTeam() {
         if (!game.currentTurnInfo) {
             return instructions()
@@ -67,21 +79,57 @@ function WaitPlay(props) {
         if (game.currentPlayer.id === playerId) {
             return <div className="wait-play-player">
                 <p>The word is</p>
-                <h2>Happy Potter</h2>
+                <h2>{game.wordToGuess.content}</h2>
                 <button>Skip this word</button>
             </div>
         }
         if (game.currentPlayer.team === player.team) {
+
+            async function handleSendClick() {
+                const guessCheck = await guessWord(game.id, guess)
+
+                if (guessCheck.isCorrect) {
+                    await delay(200)
+                    setLastGuessIndicator("correct")
+                    await delay(200)
+                    setLastGuessIndicator("neutral")
+                    await delay(200)
+                    setLastGuessIndicator("correct")
+                    await delay(200)
+                    setLastGuessIndicator("neutral")
+                    await delay(400)
+                    setGuess("")
+                } else {
+                    setLastGuessIndicator("wrong")
+                    await delay(600)
+                    setLastGuessIndicator("neutral")
+                }
+            }
+
+            let borderColor
+            switch (lastGuessIndicator) {
+                case "correct": borderColor = "green";
+                    break;
+                case "wrong": borderColor = "red";
+                    break;
+                default: borderColor = "transparent";
+            }
+
+            const sendButtonStyle = {
+                border: "4px solid",
+                borderColor: borderColor
+            }
+
             return <div>
                 <p>Try to figure out the word, and write down.</p>
                 <p>The faster the better!</p>
-                <input />
-                <button> Send </button>
+                <input style={sendButtonStyle} value={guess} onChange={(e) => setGuess(e.target.value)} />
+                <button onClick={handleSendClick}>Send </button>
             </div>
         }
 
         return <div className="wait-play-against-team">
-            <h2>It's Team  turn.</h2>
+            <h2>It's {teamsTurn}'s turn.</h2>
             <h2>Please, mute your mic!</h2>
             <i class="fas fa-microphone-slash fa-7x"></i>
         </div>
