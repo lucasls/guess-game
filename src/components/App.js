@@ -70,8 +70,7 @@ function App() {
             setGame(newGame)
         }
 
-        function handleOnResult() {
-            const newGame = { ...game }
+        function handleOnResult(newGame) {
             newGame.currentState = GameState.GAME_RESULTS
             setGame(newGame)
         }
