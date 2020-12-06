@@ -7,15 +7,27 @@ import { startTurn } from '../useCases/useCases';
 
 function WaitPlay(props) {
     const [game, setGame] = useState(props.gameData.game)
+
     const playerId = props.gameData.playerId
     const player = game.players.find(player => player.id === playerId)
 
     const phase = game.currentPhase
 
+    let currentTurnStartedAt
+    if (game.currentTurnInfo) {
+        currentTurnStartedAt = Date.parse(game.currentTurnInfo.startedAt)
+    } else {
+        currentTurnStartedAt = null
+    }
+
+    async function updateGame() {
+        const newGame = await findGame(game.id)
+        setGame(newGame)
+    }
+
     useEffect(() => {
         const interval = setInterval(async () => {
-            const newGame = await findGame(game.id)
-            setGame(newGame)
+            updateGame()
         }, 1000);
         return () => clearInterval(interval);
     }, []);
@@ -85,14 +97,20 @@ function WaitPlay(props) {
 
     async function handleStartTurnClick() {
         await startTurn(game.id)
-        const newGame = await findGame(game.id)
-        setGame(newGame)
+        updateGame()
     }
 
     if (!game.currentPlayer) {
         return <div className="components-body wait-play-component">
             <p>Loading</p>
         </div>
+    }
+
+    function timer() {
+        if (currentTurnStartedAt) {
+            const countDown = game.turnDurationSeconds - Math.floor((new Date() - currentTurnStartedAt) / 1000)
+            return <p>{countDown >= 0 ? countDown : 0}s</p>
+        }
     }
 
     const playNowHTML = game.currentPlayer 
@@ -111,6 +129,8 @@ function WaitPlay(props) {
         </div>
 
         <h1> Phase {phase + 1} </h1>
+
+        {timer()}
 
         {playerAndTeam()}
 

@@ -5,6 +5,8 @@ const GameState = require('../domain/GameState');
 const groupArray = require('group-array');
 const Team = require('../domain/Team');
 
+const TURN_DURATION_SECONDS = 10
+
 function getTurnPlayer(playersByTeam, turn, playerOrder) {
     const team = turn % 2 === 0 ? Team.GREEN : Team.BLUE
     const teamPlayers = playersByTeam[team]
@@ -21,6 +23,18 @@ function getTurnPlayer(playersByTeam, turn, playerOrder) {
     }
 }
 
+async function getAndUpdateCurrentTurn(game) {
+    const currentTurnInfo = await repository.findTurn(game.id, game.currentPhase, game.currentTurn)
+
+    if (currentTurnInfo) {
+        if (new Date() - currentTurnInfo.startedAt > TURN_DURATION_SECONDS * 1000) {
+            await repository.updateGameTurn(game.id, game.currentTurn + 1)
+        }
+    }
+
+    return currentTurnInfo
+}
+
 exports.findGame = async function(gameId) {
     const game = await repository.findGame(gameId)
 
@@ -28,10 +42,12 @@ exports.findGame = async function(gameId) {
         return null
     }
 
+    game.turnDurationSeconds = TURN_DURATION_SECONDS
+
     if (game.currentState === GameState.PLAYING) {
 
         game.playersByTeam = groupArray(game.players, p => p.team)
-        game.currentTurnInfo = await repository.findTurn(game.id, game.currentPhase, game.currentTurn)
+        game.currentTurnInfo = await getAndUpdateCurrentTurn(game)
 
         async function getPrevTurnPlayerOrder(turn) {
             const prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)
