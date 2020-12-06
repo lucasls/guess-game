@@ -41,11 +41,16 @@ function WaitPlay(props) {
             <p><i class="fas fa-users"></i>The player's team have to hit the word by writing it in the input box;</p>
             <p><i class="fas fa-user-plus"></i>When the answer is right the player receive a new world while there's time!</p>
             {/* <p>{game.currentTurn === 0 ? "The first player will be" : "Who's playing now is"} */}
-            <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team:""}}><b>
+            <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black"}}><b>
                 {game.currentPlayer ? "Team " + game.currentPlayer.team + " will start this phase" : "Have no players yet"}</b></h2>
 
         </div>
     }
+
+    const teamsTurn = <span 
+        style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black"}}
+        >Team {game.currentPlayer.team.toLowerCase()}</span>
+        
 
     function playerAndTeam() {
         if (!game.currentTurnInfo) {
@@ -53,9 +58,10 @@ function WaitPlay(props) {
         }
 
         if (game.currentPlayer.id === playerId) {
-            return <div>
-                {/* <p>{playWord}</p> */}
-                <button>Skip</button>
+            return <div className="wait-play-player">
+                <p>The word is</p>
+                <h2>Happy Potter</h2>
+                <button>Skip this word</button>
             </div>
         }
         if (game.currentPlayer.team === player.team) {
@@ -65,10 +71,10 @@ function WaitPlay(props) {
             </div>
         }
 
-
-        return <div>
-            <p>It's {game.currentPlayer.team.toLowerCase()} turn, mute your mic please!</p>
-            <i class="fas fa-microphone-slash"></i>
+        return <div className="wait-play-against-team">
+            <h2>It's {teamsTurn} turn.</h2>
+            <h2>Please, mute your mic!</h2>
+            <i class="fas fa-microphone-slash fa-7x"></i>
         </div>
 
     }
@@ -89,6 +95,14 @@ function WaitPlay(props) {
         </div>
     }
 
+    const playNowHTML = game.currentPlayer 
+        ? <span><strong>Plays now: </strong>{game.currentPlayer.name}</span>
+        : "Have no current player"
+
+    const playNextHTML = game.nextPlayer 
+        ? <span><strong>Plays next: </strong> {game.nextPlayer.name} </span>
+        : ""
+
     return <div className="components-body wait-play-component">
 
         <div className="wait-play-header">
@@ -101,8 +115,8 @@ function WaitPlay(props) {
         {playerAndTeam()}
 
         <div className="wait-play-information">
-            <p>{game.currentPlayer ?"Plays now: " + game.currentPlayer.name : "Have no current player"}</p>
-            <p>{game.nextPlayer ? "Plays next: "+ game.nextPlayer.name : ""}</p>
+            <p>{playNowHTML}</p>
+            <p>{playNextHTML}</p>
         </div>
 
         {player.isHost && !game.currentTurnInfo ? <button onClick={handleStartTurnClick}>Start Turn</button> : ""}

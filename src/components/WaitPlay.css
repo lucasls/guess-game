@@ -3,7 +3,7 @@
 }
 
 .wait-play-component h1 {
-    font-size: 4.5vmax;
+    font-size: 2.75rem;
     margin: 0;
 }
 
@@ -16,9 +16,14 @@
     margin: 0;
     padding: 10px 10px 
 }
+
 .wait-play-component i {
     padding-right: 10px;
     color:yellow;
+}
+
+wait-play-component button {
+    margin-top:  0;
 }
 
 .wait-play-information, .wait-play-header {
@@ -30,8 +35,29 @@
     width: 100%;
 }
 
-.wait-play-information p, .wait-play-header p {
+.wait-play-header p {
+    font-size: 1rem;
+    margin: auto;
+    padding-top: 5px;
+}
+
+.wait-play-information p {
     font-size: 1.2rem;
     margin: auto;
-    padding: 0;
+    padding: 25px 0 0 0;
+}
+
+.wait-play-player h2 {
+    padding: 30px 0;
+}
+
+.wait-play-player button {
+    background-color: red;
+}
+.wait-play-against-team h2 {
+    font-size: 2.5rem;
+}
+
+.fa-microphone-slash {
+    padding: 70px 0;
 }
