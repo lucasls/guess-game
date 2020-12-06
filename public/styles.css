@@ -60,7 +60,7 @@ button {
 
 @media only screen and (min-width: 760px) {
   .components-body {
-    height: 538px;
+    min-height: 538px;
     margin: auto;
     padding-bottom: 20px;
     position: relative;

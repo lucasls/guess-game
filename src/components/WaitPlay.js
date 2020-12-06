@@ -52,16 +52,14 @@ function WaitPlay(props) {
             <p><i class="fas fa-user-alt"></i><b>{phaseText}</b></p>
             <p><i class="fas fa-users"></i>The player's team have to hit the word by writing it in the input box;</p>
             <p><i class="fas fa-user-plus"></i>When the answer is right the player receive a new world while there's time!</p>
-            {/* <p>{game.currentTurn === 0 ? "The first player will be" : "Who's playing now is"} */}
             <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black"}}><b>
                 {game.currentPlayer ? "Team " + game.currentPlayer.team + " will start this phase" : "Have no players yet"}</b></h2>
 
         </div>
     }
 
-    const teamsTurn = <span 
-        style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black"}}
-        >Team {game.currentPlayer.team.toLowerCase()}</span>
+    const teamsTurn = "Team " +  game.currentPlayer.team.toLowerCase()
+
         
 
     function playerAndTeam() {
@@ -111,6 +109,8 @@ function WaitPlay(props) {
             const countDown = game.turnDurationSeconds - Math.floor((new Date() - currentTurnStartedAt) / 1000)
             return <p>{countDown >= 0 ? countDown : 0}s</p>
         }
+
+        props.onResult()
     }
 
     const playNowHTML = game.currentPlayer 

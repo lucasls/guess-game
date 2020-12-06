@@ -14,6 +14,7 @@ import findGame from '../useCases/findGame'
 import GameState from '../domain/GameState'
 import AddWords from './AddWords.js';
 import WaitPlay from './WaitPlay.js'
+import WinOrLose from './WinOrLose.js'
 
 function App() {
 
@@ -69,6 +70,12 @@ function App() {
             setGame(newGame)
         }
 
+        function handleOnResult() {
+            const newGame = { ...game }
+            newGame.currentState = GameState.GAME_RESULTS
+            setGame(newGame)
+        }
+
         const gameData = {
             playerId: playerId,
             game: game,
@@ -79,7 +86,8 @@ function App() {
             case GameState.WELCOME: return (<Welcome onStartGame={handleStartGame} />)
             case GameState.JOIN_GAME: return (<Teams gameData={gameData} onTeamComplete={handleTeamComplete} />)
             case GameState.ADD_WORDS: return (<AddWords gameData={gameData} onAllWordsSent={hanldeAllWordsSent} />)
-            case GameState.PLAYING: return (<WaitPlay gameData={gameData} />)
+            case GameState.PLAYING: return (<WaitPlay gameData={gameData} onResult={handleOnResult} />)
+            case GameState.GAME_RESULTS: return (<WinOrLose gameData={gameData} />)
         }
     }
 
