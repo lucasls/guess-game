@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './WaitPlay.css'
 import findGame from '../useCases/findGame'
 import { guessWord, startTurn } from '../useCases/useCases';
+import Team from '../domain/Team';
 
 
 function WaitPlay(props) {
@@ -32,6 +33,10 @@ function WaitPlay(props) {
 
         if (!newGame.currentTurnInfo) {
             setGuess("")
+        }
+
+        if (newGame.currentPhase > 2) {
+            props.onResult(newGame)
         }
     }
 
@@ -72,7 +77,7 @@ function WaitPlay(props) {
     </span>
         
     function playerAndTeam() {
-        if (!game.currentTurnInfo) {
+        if (!game.currentTurnInfo || !game.wordToGuess) {
             return instructions()
         }
 
@@ -136,9 +141,8 @@ function WaitPlay(props) {
 
     }
 
-    const greenPoints = 0
-    const bluePoints = 0
-    const remainingWords = 10
+    const greenPoints = game.points[Team.GREEN] || 0
+    const bluePoints = game.points[Team.BLUE] || 0
 
     async function handleStartTurnClick() {
         await startTurn(game.id)

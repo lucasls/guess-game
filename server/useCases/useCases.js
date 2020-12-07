@@ -38,6 +38,10 @@ async function getAndUpdateCurrentTurn(game) {
 async function getAndUpdateCurrentPhase(game) {
     const remainingWords = await repository.findNumRemainingWordsInPhase(game.id, game.currentPhase)
 
+    if (remainingWords === 0) {
+        await repository.updateGamePhase(game.id, game.currentPhase + 1)
+    }
+
     return {
         remainingWords: remainingWords
     }
@@ -58,6 +62,7 @@ exports.findGame = async function(gameId) {
         game.currentTurnInfo = await getAndUpdateCurrentTurn(game)
         game.currentPhaseInfo = await getAndUpdateCurrentPhase(game)
         game.wordToGuess = await repository.findNextWord(game.id, game.currentPhase, game.currentTurn)
+        game.points = await repository.calculatePoints(game.id)
 
         async function getPrevTurnPlayerOrder(turn) {
             const prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)
