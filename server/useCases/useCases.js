@@ -5,7 +5,7 @@ const GameState = require('../domain/GameState');
 const groupArray = require('group-array');
 const Team = require('../domain/Team');
 
-const TURN_DURATION_SECONDS = 60
+const TURN_DURATION_SECONDS = 90
 
 function getTurnPlayer(playersByTeam, turn, playerOrder) {
     const team = turn % 2 === 0 ? Team.GREEN : Team.BLUE
@@ -158,4 +158,9 @@ exports.guessWord = async function(gameId, word) {
     }
 
     return isCorrect
+}
+
+exports.skipWord = async function(gameId, wordId) {
+    const game = await repository.findGame(gameId)
+    await repository.skipWord(game.id, game.currentPhase, game.currentTurn, wordId)
 }

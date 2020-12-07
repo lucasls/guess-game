@@ -13,7 +13,8 @@ const {
     findPlayerWords, 
     findPlayersWithoutWords,
     startTurn,
-    guessWord
+    guessWord,
+    skipWord
  } = require('./useCases/useCases');
 
 const app = express();
@@ -90,6 +91,13 @@ app.post(
     '/games/:gameId/guesses/',
     handle(async req => ({
         isCorrect: await guessWord(req.params.gameId, req.body.word)
+    }))
+)
+
+app.post(
+    '/games/:gameId/words/:wordId/skip',
+    handle(async req => ({
+        isCorrect: await skipWord(req.params.gameId, req.params.wordId)
     }))
 )
 

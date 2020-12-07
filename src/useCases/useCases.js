@@ -30,3 +30,7 @@ export async function guessWord(gameId, word) {
     })
     return response.data
 }
+
+export async function skipWord(gameId, wordId) {
+    await axios.post(`${apiUrl}/games/${gameId}/words/${wordId}/skip`)
+}

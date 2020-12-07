@@ -2,7 +2,7 @@ import delay from 'delay';
 import React, { useEffect, useState } from 'react';
 import './WaitPlay.css'
 import findGame from '../useCases/findGame'
-import { guessWord, startTurn } from '../useCases/useCases';
+import { guessWord, skipWord, startTurn } from '../useCases/useCases';
 import Team from '../domain/Team';
 import GameState from '../domain/GameState';
 
@@ -85,10 +85,14 @@ function WaitPlay(props) {
         }
 
         if (game.currentPlayer.id === playerId) {
+            function handleSkipClick() {
+                skipWord(game.id, game.wordToGuess.id)
+            }
+
             return <div className="wait-play-player">
                 <p>The word is</p>
                 <h2>{game.wordToGuess.content}</h2>
-                <button>Skip this word</button>
+                <button onClick={handleSkipClick}>Skip this word</button>
             </div>
         }
         if (game.currentPlayer.team === player.team) {
