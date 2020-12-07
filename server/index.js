@@ -14,7 +14,8 @@ const {
     findPlayersWithoutWords,
     startTurn,
     guessWord,
-    skipWord
+    skipWord,
+    deletePlayer
  } = require('./useCases/useCases');
 
 const app = express();
@@ -99,6 +100,11 @@ app.post(
     handle(async req => ({
         isCorrect: await skipWord(req.params.gameId, req.params.wordId)
     }))
+)
+
+app.delete(
+    '/games/:gameId/players/:playerId',
+    handle(async req => await deletePlayer(req.params.gameId, req.params.playerId))
 )
 
 app.get('/*', (req, res) => {

@@ -34,3 +34,7 @@ export async function guessWord(gameId, word) {
 export async function skipWord(gameId, wordId) {
     await axios.post(`${apiUrl}/games/${gameId}/words/${wordId}/skip`)
 }
+
+export async function deletePlayer(gameId, playerId) {
+    await axios.delete(`${apiUrl}/games/${gameId}/players/${playerId}`)
+}

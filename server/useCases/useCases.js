@@ -164,3 +164,7 @@ exports.skipWord = async function(gameId, wordId) {
     const game = await repository.findGame(gameId)
     await repository.skipWord(game.id, game.currentPhase, game.currentTurn, wordId)
 }
+
+exports.deletePlayer = async function(gameId, playerId) {
+    await repository.deletePlayer(gameId, playerId)
+}

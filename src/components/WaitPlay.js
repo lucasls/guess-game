@@ -2,7 +2,7 @@ import delay from 'delay';
 import React, { useEffect, useState } from 'react';
 import './WaitPlay.css'
 import findGame from '../useCases/findGame'
-import { guessWord, skipWord, startTurn } from '../useCases/useCases';
+import { deletePlayer, guessWord, skipWord, startTurn } from '../useCases/useCases';
 import Team from '../domain/Team';
 import GameState from '../domain/GameState';
 
@@ -191,6 +191,28 @@ function WaitPlay(props) {
         ? <span><strong>Plays next: </strong> {game.nextPlayer.name} </span>
         : ""
 
+    function playersToRemove() {
+        if (!game.players || !player.isHost) {
+            return ""
+        }
+
+        async function handleRemoveClick(p) {
+            if (window.confirm(`Are you sure you want do remove ${p.name}?`)) {
+                await deletePlayer(game.id, p.id)
+                alert(`${p.name} removed`)
+            }
+        }
+
+        const items = game.players
+            .filter(p => !p.isHost)
+            .map(p => (<p>{p.name} <i class="fas fa-times-circle" onClick={() => handleRemoveClick(p)}></i></p>))
+
+        return <div>
+            <h2>Remove players</h2>
+            {items}
+        </div>
+    }
+
     return <div className="components-body wait-play-component">
 
         <div className="wait-play-header">
@@ -212,6 +234,7 @@ function WaitPlay(props) {
 
         {player.isHost && !game.currentTurnInfo ? <button onClick={handleStartTurnClick}>Start Turn</button> : ""}
 
+        {playersToRemove()}
     </div>
 
 }

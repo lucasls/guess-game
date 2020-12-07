@@ -393,3 +393,14 @@ exports.calculatePoints = async function(gameId) {
 
     return map
 }
+
+exports.deletePlayer = async function(gameId, playerId) {
+    await pool.query(`
+        delete from player p
+        where p.game_id = $1 and p.player_id = $2
+        `,
+        [
+            gameId, playerId
+        ]
+    )
+}
