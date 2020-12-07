@@ -37,6 +37,17 @@ td {
     padding-top: 0;
 }
 
+.teams-input-container {
+    display: grid;
+}
+.teams-input-container p {
+    font-size: 1rem;
+    margin: 10px;
+}
+
+
+
+
 @media only screen and (min-width: 760px) {
 .team-table {
     width: 90%;

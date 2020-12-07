@@ -11,6 +11,7 @@ function WaitPlay(props) {
     const [game, setGame] = useState(props.gameData.game)
     const [guess, setGuess] = useState("")
     const [lastGuessIndicator, setLastGuessIndicator] = useState("neutral")
+    const [fieldValue, setFieldValue] = React.useState('')
 
     const playerId = props.gameData.playerId
     const player = game.players.find(player => player.id === playerId)
@@ -55,30 +56,30 @@ function WaitPlay(props) {
         let phaseText
         switch (phase) {
             case 0:
-                phaseText = "One player receives one word/expression and have to explain for the team without saiyng exacly the word neither use synonyms;"
+                phaseText = "Player: explains the word to the team using phrases"
                 break;
             case 1:
-                phaseText = "One player receives one word/expression and have to explain for the team with just ONE word"
+                phaseText = "Player:explains the word to the team with just ONE word"
                 break;
             case 2:
-                phaseText = "One player receives one word/expression and have to explain for the team by mimicry"
+                phaseText = "Player: explains the word to the team by mimicry"
                 break;
         }
 
         return <div>
             <p><i class="fas fa-user-alt"></i><b>{phaseText}</b></p>
-            <p><i class="fas fa-users"></i>The player's team have to hit the word by writing it in the input box;</p>
-            <p><i class="fas fa-user-plus"></i>When the answer is right the player receive a new world while there's time!</p>
+            <p><i class="fas fa-users"></i>Team: has to guess the word by writing it in the input box;</p>
+            <p><i class="fas fa-user-plus"></i>Player receives a new word until time's up!</p>
             <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black" }}>
-                {game.currentPlayer ? "Team " + capitalizeTeam(game.currentPlayer.team) + " goes next" : "Have no players yet"}</h2>
+                {game.currentPlayer ? "Team " + capitalizeTeam(game.currentPlayer.team) + " goes now" : "Have no players yet"}</h2>
 
         </div>
     }
 
-    const teamsTurn = <span style={{ color: game.currentPlayer?.team || "", textShadow: "2px 2px black"}}>
+    const teamsTurn = <span style={{ color: game.currentPlayer?.team || "", textShadow: "2px 2px black" }}>
         Team {capitalizeTeam(game.currentPlayer.team)}
     </span>
-        
+
     function playerAndTeam() {
         if (!game.currentTurnInfo || !game.wordToGuess) {
             return instructions()
@@ -132,11 +133,24 @@ function WaitPlay(props) {
                 borderColor: borderColor
             }
 
+            function handleOnBlur(e) {
+                e.target.focus()
+            }
+
+            async function handleSubmit(e) {
+                e.preventDefault()
+            }
+
             return <div>
                 <p>Try to figure out the word, and write down.</p>
                 <p>The faster the better!</p>
-                <input style={sendButtonStyle} value={guess} onChange={(e) => setGuess(e.target.value)} />
-                <button onClick={handleSendClick}>Send </button>
+                <form onSubmit={handleSubmit}>
+                <input style={sendButtonStyle}
+                    value={guess}
+                    onChange={(e) => setGuess(e.target.value)}
+                    onBlur={handleOnBlur} />
+                <button type="submit" onClick={handleSendClick}>Send </button>
+                </form>
             </div>
         }
 
@@ -184,6 +198,7 @@ function WaitPlay(props) {
             <p>Green <span>{greenPoints}</span> x <span>{bluePoints}</span> Blue</p>
         </div>
 
+        <h2 style={{ color: player.team, textShadow: "2px 2px black" }}>You are part of Team {capitalizeTeam(player.team)}</h2>
         <h1> Phase {phase + 1} </h1>
 
         {timer()}

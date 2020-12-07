@@ -9,6 +9,7 @@ import joinGame from '../useCases/joinGame.js'
 function Welcome(props) {
 
     const [playerName, setPlayerName] = useState("")
+    const [noName, setNoName] = useState(false)
     const history = useHistory()
 
     let { gameId } = useParams();
@@ -16,7 +17,12 @@ function Welcome(props) {
     function handleChange(event) {
         setPlayerName(event.target.value)
     }
- 
+
+    function handleClick() {
+        setNoName(false)
+    }
+
+
     async function handleSubmit(e) {
         e.preventDefault()
         const trimmedName = playerName.trim()
@@ -24,10 +30,10 @@ function Welcome(props) {
         setPlayerName(trimmedName)
 
         if (trimmedName === "") {
-            alert("write your name please")
+            setNoName(true)
+
             return 
         }
-
         let playerId
 
         if (!gameId) {
@@ -51,13 +57,16 @@ function Welcome(props) {
         <div className="components-body">
             <h1 className="blink-text"> Guess Game </h1>
             <h2>Welcome!</h2>
-            <p>{!gameId ? "Please write your name down to create a new game." : "Please write your name down to join the game."}</p>
+            <p>{!gameId ? "Please write down your name to create a new game." : "Please write down your name to join the game."}</p>
             <form onSubmit={handleSubmit}>
                 <input 
                 type="text" 
                 value={playerName} 
                 placeholder = "Name or nickname"
-                onChange={handleChange} />
+                onChange={handleChange}
+                onClick={handleClick}
+                style={{ border: "4px solid", borderColor:noName? "red" : "transparent"}}
+                 />
 
                 <button type="submit">{!gameId ? "Create Game" : "Join Game"}</button>
             </form>

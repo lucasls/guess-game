@@ -24,3 +24,8 @@
     max-width: 300px ;
     width: 100%;
 }
+
+.alert-words {
+    color:red;
+    font-size: 1rem;
+}

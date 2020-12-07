@@ -14,6 +14,7 @@ import delay from 'delay';
 
 function Teams(props) {
     const [game, setGame] = useState(props.gameData.game)
+    const [inputClicked, setInputClicked] = useState(false)
     const playerId = props.gameData.playerId
 
     const isHost = game.players
@@ -79,17 +80,28 @@ function Teams(props) {
         props.onTeamComplete(newGame)
     }
 
+
     async function handleLinkInputClick(e) {
         e.target.select()
-        document.execCommand('copy');
+        document.execCommand('copy')
+        setInputClicked(true)
+
+
+        await delay(900)
+        setInputClicked(false)
     }
+
 
     return (
 
         <div className="components-body teams-component hd">
             <h2>Invite Link</h2>
-            <input type="text" value={window.location} onClick={handleLinkInputClick} readOnly />
             <p className="p-invite">Invite your friends to play with you!</p>
+
+            <div className="teams-input-container">
+                <input type="text" value={window.location} onClick={handleLinkInputClick} readOnly />
+                <p style={{visibility:inputClicked? "" : "hidden"}}>Copied!</p>
+            </div>
 
             <h2>Teams</h2>
             <div className="team-table">
