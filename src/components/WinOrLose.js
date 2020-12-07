@@ -1,33 +1,51 @@
 import React from 'react';
 import './WinOrLose.css'
+import ImagePreloader from 'image-preloader'
+import Team from '../domain/Team';
+
+const IMG_WIN = "https://media.giphy.com/media/FsWz0rmksvYUU/giphy-downsized.gif"
+const IMG_LOSE = "https://media.giphy.com/media/lKshIuRwlRooBiB6GG/giphy-downsized.gif"
 
 function WinOrLose(props) {
-    const isWinner = "BLUE"
-    const isLoser = "GREEN"
     const game = props.gameData.game
-    const player = game.currentPlayer
+    const playerId = props.gameData.playerId
+    const player = game.players.find(player => player.id === playerId)
     let text
     let img
 
-    if (player.team === isWinner) {
-        text = `Team ${isWinner} won!`
-        img = <img src="https://media.giphy.com/media/FsWz0rmksvYUU/giphy-downsized.gif"></img>
+    const greenPoints = game.points[Team.GREEN] || 0
+    const bluePoints = game.points[Team.BLUE] || 0
+
+    let winner
+    if (greenPoints > bluePoints) {
+        winner = Team.GREEN
+    } else if (greenPoints < bluePoints) {
+        winner = Team.BLUE
     } else {
-        text = `Team ${isLoser} lose`
-        img = <img src="https://media.giphy.com/media/lKshIuRwlRooBiB6GG/giphy-downsized.gif"></img>
+        winner = null
+    }
+    
+
+    if (player.team === winner) {
+        text = `Team ${player.team} wins!`
+        img = <img src={IMG_WIN}></img>
+    } else {
+        text = `Team ${player.team} loses`
+        img = <img src={IMG_LOSE}></img>
     }
 
     return <div className="components-body win-or-lose">
         <h1>{text}</h1>
+        <p>Green <span>{greenPoints}</span> x <span>{bluePoints}</span> Blue</p>
         {img}
-
-        <div>
-            <button style={{ display: player.isHost ? "none" : "" }}>Play Again</button>
-            <button>Close Game</button>
-        </div>
     </div>
 
 
+}
+
+WinOrLose.preloadImages = function() {
+    ImagePreloader.simplePreload(IMG_WIN)
+    ImagePreloader.simplePreload(IMG_LOSE)
 }
 
 export default WinOrLose;

@@ -26,6 +26,8 @@ function App() {
         const playerId = Cookie.get("playerId")
 
         useEffect(async () => {
+            WinOrLose.preloadImages()
+
             if (gameId && playerId) {
                 const game = await findGame(gameId)
 
@@ -71,7 +73,6 @@ function App() {
         }
 
         function handleOnResult(newGame) {
-            newGame.currentState = GameState.GAME_RESULTS
             setGame(newGame)
         }
 

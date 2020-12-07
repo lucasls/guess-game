@@ -39,7 +39,11 @@ async function getAndUpdateCurrentPhase(game) {
     const remainingWords = await repository.findNumRemainingWordsInPhase(game.id, game.currentPhase)
 
     if (remainingWords === 0) {
-        await repository.updateGamePhase(game.id, game.currentPhase + 1)
+        if (game.currentPhase < 2) {
+            await repository.updateGamePhase(game.id, game.currentPhase + 1)
+        } else {
+            await repository.setGameState(game.id, GameState.GAME_RESULTS)
+        }
     }
 
     return {
@@ -56,7 +60,7 @@ exports.findGame = async function(gameId) {
 
     game.turnDurationSeconds = TURN_DURATION_SECONDS
 
-    if (game.currentState === GameState.PLAYING) {
+    if (game.currentState === GameState.PLAYING || game.currentState === GameState.GAME_RESULTS) {
 
         game.playersByTeam = groupArray(game.players, p => p.team)
         game.currentTurnInfo = await getAndUpdateCurrentTurn(game)

@@ -4,6 +4,7 @@ import './WaitPlay.css'
 import findGame from '../useCases/findGame'
 import { guessWord, startTurn } from '../useCases/useCases';
 import Team from '../domain/Team';
+import GameState from '../domain/GameState';
 
 
 function WaitPlay(props) {
@@ -29,14 +30,16 @@ function WaitPlay(props) {
 
     async function updateGame() {
         const newGame = await findGame(game.id)
+
+        if (newGame.currentState === GameState.GAME_RESULTS) {
+            props.onResult(newGame)
+            return
+        }
+
         setGame(newGame)
 
         if (!newGame.currentTurnInfo) {
             setGuess("")
-        }
-
-        if (newGame.currentPhase > 2) {
-            props.onResult(newGame)
         }
     }
 
