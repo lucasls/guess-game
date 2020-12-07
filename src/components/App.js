@@ -66,9 +66,8 @@ function App() {
             setGame(game)
         }
 
-        function hanldeAllWordsSent() {
-            const newGame = {...game}
-            newGame.currentState = GameState.PLAYING
+        async function hanldeAllWordsSent() {
+            const newGame = await findGame(gameId)
             setGame(newGame)
         }
 

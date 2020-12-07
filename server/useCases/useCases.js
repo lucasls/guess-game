@@ -144,7 +144,7 @@ exports.startTurn = async function(gameId) {
 }
 
 function normalize(str) {
-    return str.trim().replaceAll(/\s+/g, " ").toLowerCase()
+    return str.trim().replace(/\s+/g, " ").toLowerCase()
 }
 
 exports.guessWord = async function(gameId, word) {

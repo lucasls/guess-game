@@ -9,6 +9,7 @@ import setPlayerTeam from '../useCases/setPlayerTeam'
 import findGame from '../useCases/findGame'
 import setGameState from '../useCases/setGameState'
 import './Teams.css'
+import delay from 'delay';
 
 
 function Teams(props) {
@@ -78,11 +79,16 @@ function Teams(props) {
         props.onTeamComplete(newGame)
     }
 
+    async function handleLinkInputClick(e) {
+        e.target.select()
+        document.execCommand('copy');
+    }
+
     return (
 
         <div className="components-body teams-component hd">
             <h2>Invite Link</h2>
-            <input type="text" value={window.location} readOnly />
+            <input type="text" value={window.location} onClick={handleLinkInputClick} readOnly />
             <p className="p-invite">Invite your friends to play with you!</p>
 
             <h2>Teams</h2>
