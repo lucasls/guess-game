@@ -371,17 +371,18 @@ exports.skipWord = async function(gameId, phase, turnOrder, wordId) {
 
 exports.calculatePoints = async function(gameId) {
     const res =  await pool.query(`
-        select p.team, sum(tw.phase + 1) total_points from turn_word tw
+        select case (t.turn_order % 2)
+            when 0 then 'GREEN'
+            else 'BLUE'
+        end team, sum(tw.phase + 1) total_points
+        from turn_word tw
         join turn t
             on t.game_id = tw.game_id
             and t.phase = tw.phase
             and t.turn_order = tw.turn_order
-        join player p
-            on p.game_id = t.game_id
-            and p.player_id = t.player_id
         where tw.game_id = $1
         and tw.guessed = true
-        group by p.team`,
+        group by t.turn_order % 2`,
         [gameId]
     )
 
