@@ -24,10 +24,8 @@ export async function startTurn(gameId) {
     await axios.post(`${apiUrl}/games/${gameId}/start-turn`)
 }
 
-export async function guessWord(gameId, word) {
-    const response =  await axios.post(`${apiUrl}/games/${gameId}/guesses/`, {
-        word: word
-    })
+export async function guessWord(gameId) {
+    const response =  await axios.post(`${apiUrl}/games/${gameId}/guesses/`,)
     return response.data
 }
 

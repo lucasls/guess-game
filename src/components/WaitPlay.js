@@ -9,9 +9,6 @@ import GameState from '../domain/GameState';
 
 function WaitPlay(props) {
     const [game, setGame] = useState(props.gameData.game)
-    const [guess, setGuess] = useState("")
-    const [lastGuessIndicator, setLastGuessIndicator] = useState("neutral")
-    const [fieldValue, setFieldValue] = React.useState('')
 
     const playerId = props.gameData.playerId
     const player = game.players.find(player => player.id === playerId)
@@ -36,12 +33,8 @@ function WaitPlay(props) {
             props.onResult(newGame)
             return
         }
-
         setGame(newGame)
 
-        if (!newGame.currentTurnInfo) {
-            setGuess("")
-        }
     }
 
     useEffect(() => {
@@ -68,7 +61,7 @@ function WaitPlay(props) {
 
         return <div>
             <p><i class="fas fa-user-alt"></i><b>{phaseText}</b></p>
-            <p><i class="fas fa-users"></i>Team: has to guess the word by writing it in the input box;</p>
+            <p><i class="fas fa-users"></i>Team: has to guess the word;</p>
             <p><i class="fas fa-user-plus"></i>Player receives a new word until time's up!</p>
             <h2 style={{ color: game.currentPlayer ? game.currentPlayer.team : "", textShadow: "2px 2px black" }}>
                 {game.currentPlayer ? "Team " + capitalizeTeam(game.currentPlayer.team) + " goes now" : "Have no players yet"}</h2>
@@ -79,6 +72,10 @@ function WaitPlay(props) {
     const teamsTurn = <span style={{ color: game.currentPlayer?.team || "", textShadow: "2px 2px black" }}>
         Team {capitalizeTeam(game.currentPlayer.team)}
     </span>
+
+    async function handleSendClick() {
+        const guessRight = await guessWord(game.id)
+    }
 
     function playerAndTeam() {
         if (!game.currentTurnInfo || !game.wordToGuess) {
@@ -93,64 +90,18 @@ function WaitPlay(props) {
             return <div className="wait-play-player">
                 <p>The word is</p>
                 <h2>{game.wordToGuess.content}</h2>
-                <button onClick={handleSkipClick}>Skip this word</button>
+
+                <div className="guess-buttons">
+                    <button className="button-guessed" onClick={handleSendClick}>Guessed!</button>
+                    <button className="button-skip" onClick={handleSkipClick}>Skip word</button>
+                </div>
             </div>
         }
         if (game.currentPlayer.team === player.team) {
 
-            async function handleSendClick() {
-                const guessCheck = await guessWord(game.id, guess)
-
-                if (guessCheck.isCorrect) {
-                    await delay(200)
-                    setLastGuessIndicator("correct")
-                    await delay(200)
-                    setLastGuessIndicator("neutral")
-                    await delay(200)
-                    setLastGuessIndicator("correct")
-                    await delay(200)
-                    setLastGuessIndicator("neutral")
-                    await delay(400)
-                    setGuess("")
-                } else {
-                    setLastGuessIndicator("wrong")
-                    await delay(600)
-                    setLastGuessIndicator("neutral")
-                }
-            }
-
-            let borderColor
-            switch (lastGuessIndicator) {
-                case "correct": borderColor = "green";
-                    break;
-                case "wrong": borderColor = "red";
-                    break;
-                default: borderColor = "transparent";
-            }
-
-            const sendButtonStyle = {
-                border: "4px solid",
-                borderColor: borderColor
-            }
-
-            function handleOnBlur(e) {
-                e.target.focus()
-            }
-
-            async function handleSubmit(e) {
-                e.preventDefault()
-            }
-
-            return <div>
-                <p>Try to figure out the word, and write down.</p>
-                <p>The faster the better!</p>
-                <form onSubmit={handleSubmit}>
-                <input style={sendButtonStyle}
-                    value={guess}
-                    onChange={(e) => setGuess(e.target.value)}
-                    onBlur={handleOnBlur} />
-                <button type="submit" onClick={handleSendClick}>Send </button>
-                </form>
+            return <div className="player-team">
+                <h2>Say what you think it is!</h2>
+                <h2>The faster you figure out the better!</h2>
             </div>
         }
 
@@ -209,7 +160,9 @@ function WaitPlay(props) {
 
         return <div>
             <h2>Remove players</h2>
-            {items}
+            <div className="remove-players">
+                {items}
+            </div>
         </div>
     }
 
@@ -235,6 +188,7 @@ function WaitPlay(props) {
         {player.isHost && !game.currentTurnInfo ? <button onClick={handleStartTurnClick}>Start Turn</button> : ""}
 
         {playersToRemove()}
+
     </div>
 
 }

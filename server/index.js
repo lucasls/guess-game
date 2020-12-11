@@ -91,7 +91,7 @@ app.post(
 app.post(
     '/games/:gameId/guesses/',
     handle(async req => ({
-        isCorrect: await guessWord(req.params.gameId, req.body.word)
+        isCorrect: await guessWord(req.params.gameId)
     }))
 )
 
