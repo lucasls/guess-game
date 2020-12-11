@@ -40,7 +40,7 @@ async function getAndUpdateCurrentPhase(game) {
 
     if (remainingWords === 0) {
         if (game.currentPhase < 2) {
-            await repository.updateGamePhase(game.id, game.currentPhase + 1)
+            await repository.updateGamePhaseAndTurn(game.id, game.currentPhase + 1, game.currentTurn + 1)
         } else {
             await repository.setGameState(game.id, GameState.GAME_RESULTS)
         }
@@ -69,7 +69,11 @@ exports.findGame = async function(gameId) {
         game.points = await repository.calculatePoints(game.id)
 
         async function getPrevTurnPlayerOrder(turn) {
-            const prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)
+            let prevTurn = await repository.findTurn(game.id, game.currentPhase, turn)
+            if (!prevTurn) {
+                prevTurn = await repository.findTurn(game.id, game.currentPhase - 1, turn)
+            }
+
             if (prevTurn) {
                 return prevTurn.playerOrder + 1
             }
@@ -83,7 +87,7 @@ exports.findGame = async function(gameId) {
             currentPlayerOrder = await getPrevTurnPlayerOrder(game.currentTurn - 2)
         }
 
-        const nextPlayerOrder = await getPrevTurnPlayerOrder(game.currentTurn -1)
+        const nextPlayerOrder = await getPrevTurnPlayerOrder(game.currentTurn - 1)
         
         game.currentPlayer = getTurnPlayer(game.playersByTeam, game.currentTurn, currentPlayerOrder).player
         game.nextPlayer = getTurnPlayer(game.playersByTeam, game.currentTurn + 1, nextPlayerOrder).player
@@ -116,7 +120,11 @@ exports.findPlayersWithoutWords = async function(gameId) {
 
 exports.startTurn = async function(gameId) {
     const game = await repository.findGame(gameId)
-    const prevTurn = await repository.findTurn(gameId, game.currentPhase, game.currentTurn - 2)
+
+    let prevTurn = await repository.findTurn(gameId, game.currentPhase, game.currentTurn - 2)
+    if (!prevTurn) {
+        prevTurn = await repository.findTurn(gameId, game.currentPhase - 1, game.currentTurn - 2)
+    }
 
     const playersByTeam = groupArray(game.players, p => p.team)
 
@@ -147,11 +155,11 @@ function normalize(str) {
     return str.trim().replace(/\s+/g, " ").toLowerCase()
 }
 
-exports.guessWord = async function(gameId, word) {
+exports.guessWord = async function(gameId) {
     const game = await repository.findGame(gameId)
     const wordToGuess = await repository.findNextWord(game.id, game.currentPhase, game.currentTurn)
 
-    const isCorrect = normalize(word) === normalize(wordToGuess.content)
+    const isCorrect = normalize(wordToGuess.content)
 
     if (isCorrect) {
         repository.setWordIsGuessed(game.id, game.currentPhase, game.currentTurn, wordToGuess.id)

@@ -246,12 +246,13 @@ exports.updateGameTurn = async function(gameId, turn) {
     )
 }
 
-exports.updateGamePhase = async function(gameId, phase) {
+exports.updateGamePhaseAndTurn = async function(gameId, phase, turn) {
     await pool.query(`
         update game
-        set current_phase = $1
-        where game_id = $2`,
-        [phase, gameId]
+        set current_phase = $1,
+        current_turn = $2
+        where game_id = $3`,
+        [phase, turn, gameId]
     )
 }
 
