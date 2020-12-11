@@ -52,12 +52,6 @@ button {
     padding: 10px 15px 20px;
 }
 
-.alert {
-    width: 50px;
-    height: 50px;
-    background-color: greenyellow;
-}
-
 @media only screen and (min-width: 760px) {
   .components-body {
     min-height: 538px;

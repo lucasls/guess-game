@@ -50,13 +50,42 @@ wait-play-component button {
     padding: 30px 0;
 }
 
-.wait-play-player button {
+.button-skip {
     background-color: red;
+    padding: 10px ;
 }
+
+
+.button-guessed {
+    background-color: greenyellow;
+    border-color: black;
+    color: black;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-top: 0;
+}
+
+.guess-buttons {
+    display: grid;
+    justify-items: center;
+}
+
+.player-team {
+    color: greenyellow;
+    text-shadow: 2px 2px black;
+}
+
 .wait-play-against-team h2 {
     font-size: 2.5rem;
 }
 
 .fa-microphone-slash {
     padding: 70px 0;
+}
+
+.remove-players {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
