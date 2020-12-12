@@ -390,7 +390,7 @@ exports.calculatePoints = async function(gameId) {
     const map = {}
 
     res.rows.forEach(row => {
-        map[row.team] = parseInt(row.total_points)s
+        map[row.team] = parseInt(row.total_points)
     })
 
     return map
